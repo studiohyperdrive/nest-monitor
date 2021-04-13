@@ -6,39 +6,34 @@ import { TerminusModule } from '@nestjs/terminus';
 
 import { config as debugConfig } from './config/debug.config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { MongooseModule } from '@nestjs/mongoose';
+import { ConfigService } from './config/config.service';
 
 // voodoo magic, be careful
 @Module({
   imports: [TerminusModule],
   // Debug: remove later
   controllers: [MonitorController],
-  providers: [MonitorService],
+  providers: [MonitorService, ConfigService],
   //
 })
 export class MonitorModule {
-  public static config: InputConfig;
-
-  // Debug: remove later
-  public constructor() {
-    MonitorModule.config = debugConfig;
-  }
-  //
-
   public static forConfig(config: InputConfig): DynamicModule {
-    MonitorModule.config = config;
+    const configService = new ConfigService(config);
 
     const typeOrm = TypeOrmModule.forRoot(
-      MonitorModule.config.typeOrmCheck.options,
+      configService.config.typeOrmCheck.options,
     );
-
-    // const mongodb = MongooseModule.forRoot(MonitorModule.config.mongoCheck.uri);
 
     return {
       module: MonitorModule,
       imports: [typeOrm],
       controllers: [MonitorController],
-      providers: [MonitorService],
+      providers: [
+        {
+          provide: ConfigService,
+          useValue: configService,
+        },
+      ],
       exports: [MonitorService],
       global: true,
     };

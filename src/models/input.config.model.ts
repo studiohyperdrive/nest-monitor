@@ -45,7 +45,6 @@ export class MicroServiceCheck {
     public microserviceName: string,
     public transport: Transport,
     public config: MicroserviceOptions,
-    public port: number,
   ) {}
 }
 

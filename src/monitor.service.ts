@@ -1,19 +1,17 @@
 import { Injectable, Logger } from '@nestjs/common';
 import {
-  DiskHealthIndicator,
   HealthCheck,
   HealthCheckService,
+  DiskHealthIndicator,
   HttpHealthIndicator,
   MemoryHealthIndicator,
   MicroserviceHealthIndicator,
   TypeOrmHealthIndicator,
 } from '@nestjs/terminus';
-import { MonitorModule } from './monitor.module';
+import { ConfigService } from './config/config.service';
 
 @Injectable()
 export class MonitorService {
-  // private health: HealthCheckService;
-  // private http: HttpHealthIndicator;
   private microservice: MicroserviceHealthIndicator = null;
 
   public constructor(
@@ -21,85 +19,65 @@ export class MonitorService {
     private http: HttpHealthIndicator,
     private memory: MemoryHealthIndicator,
     private typeOrm: TypeOrmHealthIndicator,
-  ) {
-    if (this.containsMicroServiceChecks()) {
-      this.microservice = new MicroserviceHealthIndicator();
-    }
-  }
+    private microService: MicroserviceHealthIndicator,
+    private configService: ConfigService,
+  ) {}
 
   public containsMicroServiceChecks(): boolean {
-    return MonitorModule.config.microserviceChecks != null;
+    return this.configService.config.microserviceChecks != null;
   }
 
   public containsTypeOrmCheck(): boolean {
-    return MonitorModule.config.typeOrmCheck != null;
+    return this.configService.config.typeOrmCheck != null;
   }
-
-  // This is the non-syntactic sugar of dependency injection, this way we can
-  // check whether some packages/health checks exist before instantiating them and cache
-  // the resources in the backend.
-
-  /*
-  public constructor() {
-    this.health = new HealthCheckService(new HealthCheckExecutor());
-    this.http = new HttpHealthIndicator(new HttpService());
-  }
-   */
 
   @HealthCheck()
   public HttpHealthCheck() {
-    if (MonitorModule.config.httpChecks) {
-      return this.health.check(
-        MonitorModule.config.httpChecks.map((httpCheck) => () =>
-          this.http.pingCheck(httpCheck.siteName, httpCheck.siteUrl),
-        ),
-      );
-    }
+    if (!this.configService.config.httpChecks) return null;
 
-    return null;
+    return this.health.check(
+      this.configService.config.httpChecks.map((httpCheck) => () =>
+        this.http.pingCheck(httpCheck.siteName, httpCheck.siteUrl),
+      ),
+    );
   }
 
   @HealthCheck()
   public MicroserviceHealthCheck() {
-    if (MonitorModule.config.microserviceChecks) {
-      return this.health.check(
-        MonitorModule.config.microserviceChecks.map((m) => () =>
-          this.microservice.pingCheck(m.microserviceName, {
-            transport: m.transport,
-          }),
-        ),
-      );
-    }
+    if (!this.configService.config.microserviceChecks) return null;
 
-    return null;
+    return this.health.check(
+      this.configService.config.microserviceChecks.map((micro) => () =>
+        this.microservice.pingCheck(micro.microserviceName, {
+          transport: micro.transport,
+          options: micro.config,
+        }),
+      ),
+    );
   }
 
   @HealthCheck()
   public async MemoryHealthCheck() {
-    if (MonitorModule.config.memoryCheck) {
-      return this.health.check([
-        () =>
-          this.memory.checkHeap(
-            MonitorModule.config.memoryCheck.name,
-            MonitorModule.config.memoryCheck.heapThreshold * 1024 * 1024,
-          ),
-      ]);
-    }
+    if (!this.configService.config.memoryCheck) return null;
 
-    return null;
+    return this.health.check([
+      () =>
+        this.memory.checkHeap(
+          this.configService.config.memoryCheck.name,
+          this.configService.config.memoryCheck.heapThreshold * 1024 * 1024,
+        ),
+    ]);
   }
 
   @HealthCheck()
   public async TypeOrmCheck() {
-    if (MonitorModule.config.typeOrmCheck) {
-      return this.health.check([
-        () =>
-          this.typeOrm.pingCheck(MonitorModule.config.typeOrmCheck.name, {
-            timeout: MonitorModule.config.typeOrmCheck.timeout,
-          }),
-      ]);
-    }
+    if (this.configService.config.typeOrmCheck) return null;
 
-    return null;
+    return this.health.check([
+      () =>
+        this.typeOrm.pingCheck(this.configService.config.typeOrmCheck.name, {
+          timeout: this.configService.config.typeOrmCheck.timeout,
+        }),
+    ]);
   }
 }

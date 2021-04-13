@@ -1,20 +1,23 @@
 import { Controller, Get, Logger } from '@nestjs/common';
-import { MonitorModule } from './monitor.module';
 import { Config } from './models/config.model';
+import { ConfigService } from './config/config.service';
 import { MonitorService } from './monitor.service';
 
 @Controller('/status')
 export class MonitorController {
-  public constructor(private monitorService: MonitorService) {}
+  public constructor(
+    private configService: ConfigService,
+    private monitorService: MonitorService,
+  ) {}
 
   @Get('ping')
   getPing() {
-    if (MonitorModule.config == null) {
+    if (this.configService.config == null) {
       Logger.error('Config object appears to be null');
     }
 
     const config: Config = {
-      ...MonitorModule.config,
+      ...this.configService.config,
       success: true,
     };
 

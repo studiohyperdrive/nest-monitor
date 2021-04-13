@@ -38,7 +38,8 @@ export const config: InputConfig = {
       transport: Transport.TCP,
       config: {
         options: {
-          url: 'yes',
+          host: '',
+          port: 9000,
         },
       },
       port: 3000,
