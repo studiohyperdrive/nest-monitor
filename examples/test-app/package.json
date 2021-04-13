@@ -1,14 +1,14 @@
 {
-  "name": "@studiohyperdrive/nestjs-monitor",
+  "name": "test-project",
   "version": "0.0.1",
   "description": "",
   "author": "",
   "private": true,
-  "license": "GNU GENERAL PUBLIC LICENSE",
+  "license": "UNLICENSED",
   "scripts": {
     "prebuild": "rimraf dist",
     "build": "nest build",
-    "format": "prettier --write \\\"src/**/*.ts\\\" \\\"test/**/*.ts\\\"",
+    "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
@@ -23,17 +23,11 @@
   "dependencies": {
     "@nestjs/common": "^7.5.1",
     "@nestjs/core": "^7.5.1",
-    "@nestjs/microservices": "^7.6.15",
-    "@nestjs/mongoose": "^7.2.4",
     "@nestjs/platform-express": "^7.5.1",
-    "@nestjs/terminus": "^7.1.2",
-    "@nestjs/typeorm": "^7.1.5",
-    "mongoose": "^5.12.3",
-    "pg": "^8.5.1",
+    "@studiohyperdrive/nestjs-monitor": "../../",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
-    "rxjs": "^6.6.3",
-    "typeorm": "^0.2.32"
+    "rxjs": "^6.6.3"
   },
   "devDependencies": {
     "@nestjs/cli": "^7.5.1",

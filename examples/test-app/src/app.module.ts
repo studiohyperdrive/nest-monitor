@@ -1,4 +1,8 @@
-import { InputConfig } from '../models/input.config.model';
+import { Module } from '@nestjs/common';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+import { MonitorModule } from '../../../src/monitor.module';
+import { InputConfig } from '../../../src/models/input.config.model';
 import { Transport } from '@nestjs/microservices';
 
 export const config: InputConfig = {
@@ -38,10 +42,17 @@ export const config: InputConfig = {
       transport: Transport.TCP,
       config: {
         options: {
-          host: '',
-          port: 9000,
+          host: 'localhost',
+          port: 3000,
         },
       },
     },
   ],
 };
+
+@Module({
+  imports: [MonitorModule.forConfig(config)],
+  controllers: [AppController],
+  providers: [AppService],
+})
+export class AppModule {}

@@ -12,8 +12,6 @@ import { ConfigService } from './config/config.service';
 
 @Injectable()
 export class MonitorService {
-  private microservice: MicroserviceHealthIndicator = null;
-
   public constructor(
     private health: HealthCheckService,
     private http: HttpHealthIndicator,
@@ -48,7 +46,7 @@ export class MonitorService {
 
     return this.health.check(
       this.configService.config.microserviceChecks.map((micro) => () =>
-        this.microservice.pingCheck(micro.microserviceName, {
+        this.microService.pingCheck(micro.microserviceName, {
           transport: micro.transport,
           options: micro.config,
         }),

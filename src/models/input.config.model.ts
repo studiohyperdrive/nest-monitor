@@ -1,29 +1,6 @@
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
 
-/*
-export type InputConfig = {
-  version: string;
-  name: string;
-  environment: string;
-  httpChecks?: HttpCheck[];
-  microserviceChecks?: MicroServiceCheck[];
-};
-
-export type HttpCheck = {
-  siteName: string;
-  siteUrl: string;
-};
-
-export type MicroServiceCheck = {
-  transport: string;
-  options: {
-    host: string;
-  };
-  port: number;
-};
- */
-
 export class InputConfig {
   public constructor(
     public version: string,
@@ -66,6 +43,7 @@ export class TypeOrmCheck {
 export class MongoCheck {
   public constructor(public uri: string) {}
 }
+
 /*
 export class DiskCheck {
   public constructor(public name: string = 'disk', public capacity: number) {}
