@@ -1,5 +1,6 @@
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
+import { ICustomHealth } from './custom.health.model';
 
 export class InputConfig {
   public constructor(
@@ -10,6 +11,7 @@ export class InputConfig {
     public microserviceChecks?: MicroServiceCheck[],
     public memoryCheck?: MemoryCheck, // public diskCheck?: DiskCheck,
     public typeOrmCheck?: TypeOrmCheck, // public mongoCheck?: MongoCheck,
+    public customHealthChecks?: ICustomHealth[],
   ) {}
 }
 

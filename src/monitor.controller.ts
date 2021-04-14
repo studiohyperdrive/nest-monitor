@@ -26,17 +26,24 @@ export class MonitorController {
 
   @Get('monitor')
   async getMonitor(): Promise<any> {
-    const httpResult = await this.monitorService.HttpHealthCheck();
-    const microservicesResult = await this.monitorService.MicroserviceHealthCheck();
-    const memoryResult = await this.monitorService.MemoryHealthCheck();
-    const typeOrmResult = await this.monitorService.TypeOrmCheck();
+    // Error can only be caught here, even though the error orginally appears in the check itself.
+    try {
+      const httpResult = await this.monitorService.HttpHealthCheck();
+      const microservicesResult = await this.monitorService.MicroserviceHealthCheck();
+      const memoryResult = await this.monitorService.MemoryHealthCheck();
+      const typeOrmResult = await this.monitorService.TypeOrmCheck();
+      const customHealthResult = await this.monitorService.CustomHealthChecks();
 
-    return {
-      http: httpResult ? httpResult : null,
-      microservices: microservicesResult ? microservicesResult : null,
-      memory: memoryResult ? memoryResult : null,
-      typeOrm: typeOrmResult ? typeOrmResult : null,
-    };
+      return {
+        http: httpResult ? httpResult : null,
+        microservices: microservicesResult ? microservicesResult : null,
+        memory: memoryResult ? memoryResult : null,
+        typeOrm: typeOrmResult ? typeOrmResult : null,
+        custom: customHealthResult ? customHealthResult : null,
+      };
+    } catch (e) {
+      return e;
+    }
 
     // todo: Cycle through dependencies and do a vibe check :D
   }

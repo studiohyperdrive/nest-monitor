@@ -31,13 +31,17 @@ export class MonitorService {
 
   @HealthCheck()
   public HttpHealthCheck() {
-    if (!this.configService.config.httpChecks) return null;
+    try {
+      if (!this.configService.config.httpChecks) return null;
 
-    return this.health.check(
-      this.configService.config.httpChecks.map((httpCheck) => () =>
-        this.http.pingCheck(httpCheck.siteName, httpCheck.siteUrl),
-      ),
-    );
+      return this.health.check(
+        this.configService.config.httpChecks.map((httpCheck) => () =>
+          this.http.pingCheck(httpCheck.siteName, httpCheck.siteUrl),
+        ),
+      );
+    } catch (e) {
+      return 'bla';
+    }
   }
 
   @HealthCheck()
@@ -69,7 +73,7 @@ export class MonitorService {
 
   @HealthCheck()
   public async TypeOrmCheck() {
-    if (this.configService.config.typeOrmCheck) return null;
+    if (!this.configService.config.typeOrmCheck) return null;
 
     return this.health.check([
       () =>
@@ -77,5 +81,16 @@ export class MonitorService {
           timeout: this.configService.config.typeOrmCheck.timeout,
         }),
     ]);
+  }
+
+  @HealthCheck()
+  public async CustomHealthChecks() {
+    if (!this.configService.config.customHealthChecks) return null;
+
+    return this.health.check(
+      this.configService.config.customHealthChecks.map((custom) => () =>
+        custom.isHealthy(),
+      ),
+    );
   }
 }
