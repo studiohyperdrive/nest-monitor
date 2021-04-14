@@ -29,22 +29,16 @@ export class MonitorService {
     return this.configService.config.typeOrmCheck != null;
   }
 
-  @HealthCheck()
-  public HttpHealthCheck() {
-    try {
-      if (!this.configService.config.httpChecks) return null;
+  public async HttpHealthCheck() {
+    if (!this.configService.config.httpChecks) return null;
 
-      return this.health.check(
-        this.configService.config.httpChecks.map((httpCheck) => () =>
-          this.http.pingCheck(httpCheck.siteName, httpCheck.siteUrl),
-        ),
-      );
-    } catch (e) {
-      return 'bla';
-    }
+    return this.health.check(
+      this.configService.config.httpChecks.map((httpCheck) => () =>
+        this.http.pingCheck(httpCheck.siteName, httpCheck.siteUrl),
+      ),
+    );
   }
 
-  @HealthCheck()
   public MicroserviceHealthCheck() {
     if (!this.configService.config.microserviceChecks) return null;
 
@@ -58,7 +52,6 @@ export class MonitorService {
     );
   }
 
-  @HealthCheck()
   public async MemoryHealthCheck() {
     if (!this.configService.config.memoryCheck) return null;
 
@@ -71,7 +64,6 @@ export class MonitorService {
     ]);
   }
 
-  @HealthCheck()
   public async TypeOrmCheck() {
     if (!this.configService.config.typeOrmCheck) return null;
 
@@ -83,7 +75,6 @@ export class MonitorService {
     ]);
   }
 
-  @HealthCheck()
   public async CustomHealthChecks() {
     if (!this.configService.config.customHealthChecks) return null;
 

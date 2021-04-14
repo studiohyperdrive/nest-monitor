@@ -28,11 +28,19 @@ export class MonitorController {
   async getMonitor(): Promise<any> {
     // Error can only be caught here, even though the error orginally appears in the check itself.
     try {
-      const httpResult = await this.monitorService.HttpHealthCheck();
-      const microservicesResult = await this.monitorService.MicroserviceHealthCheck();
-      const memoryResult = await this.monitorService.MemoryHealthCheck();
-      const typeOrmResult = await this.monitorService.TypeOrmCheck();
-      const customHealthResult = await this.monitorService.CustomHealthChecks();
+      const [
+        httpResult,
+        microservicesResult,
+        memoryResult,
+        typeOrmResult,
+        customHealthResult,
+      ] = await Promise.allSettled([
+        this.monitorService.HttpHealthCheck(),
+        this.monitorService.MicroserviceHealthCheck(),
+        this.monitorService.MemoryHealthCheck(),
+        this.monitorService.TypeOrmCheck(),
+        this.monitorService.CustomHealthChecks(),
+      ]);
 
       return {
         http: httpResult ? httpResult : null,

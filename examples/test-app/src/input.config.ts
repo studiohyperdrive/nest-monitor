@@ -17,7 +17,7 @@ export const config: InputConfig = {
     },
     {
       siteName: 'facebook',
-      siteUrl: 'https://www.facebook.com',
+      siteUrl: 'https://www.faceboggigiugiok.com',
     },
   ],
   typeOrmCheck: {
