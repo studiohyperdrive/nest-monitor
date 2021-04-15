@@ -19,14 +19,17 @@ import { ConfigService } from './config/config.service';
 export class MonitorModule {
   public static forConfig(config: InputConfig): DynamicModule {
     const configService = new ConfigService(config);
+    let typeOrm = null;
 
-    const typeOrm = TypeOrmModule.forRoot(
-      configService.config.typeOrmCheck.options,
-    );
+    if (configService.config.typeOrmCheck) {
+      typeOrm = TypeOrmModule.forRoot(
+        configService.config.typeOrmCheck.options,
+      );
+    }
 
     return {
       module: MonitorModule,
-      imports: [typeOrm],
+      imports: typeOrm ? [typeOrm] : [],
       controllers: [MonitorController],
       providers: [
         {
