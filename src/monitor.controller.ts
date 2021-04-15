@@ -17,7 +17,9 @@ export class MonitorController {
     }
 
     const config: Config = {
-      ...this.configService.config,
+      environment: this.configService.config.environment,
+      name: this.configService.config.name,
+      version: this.configService.config.version,
       success: true,
     };
 
