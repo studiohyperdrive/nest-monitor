@@ -14,6 +14,8 @@ export class MonitorController {
   getPing() {
     if (this.configService.config == null) {
       Logger.error('Config object appears to be null');
+
+      return { success: false, message: 'Config object appears to be null' };
     }
 
     const config: Config = {
