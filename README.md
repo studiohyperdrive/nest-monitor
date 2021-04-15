@@ -72,6 +72,10 @@ whether that api gives a lively response.
 
 In this scenario the google check will return an `up` status and the facebook check return a `down` status.
 
+***Important***  
+
+The `down` status is only given to statuscodes above 500, it **won't** consider a missing api key or missing route as `down`.
+
 ### Memory check
 
 ```js
@@ -109,6 +113,8 @@ export const config: InputConfig = {
 The microservice checks takes in an array of checks and will simply send a ping to all of them to see if they are still alive,
 in return they respond with the `up` or `down` status.
 
+**NOTE:** microservice checks are still untested and under development.
+
 ### TypeORM checks
 
 ```js
@@ -131,7 +137,7 @@ export const config: InputConfig = {
 ```
 
 TypeOrm checks are used to ping the database and see if they are still alive, the options field is 
-of the type `TypeOrmModuleOptions` what you normally use for the TypeOrm package.
+of the type [TypeOrmModuleOptions](https://typeorm.io/#/connection-options) what you normally use for the TypeOrm package.
 
 ### Custom checks
 
@@ -179,16 +185,165 @@ or a thrown HealthCheckError.
 
 This package will reserve 2 routes, this also means that your project should not define the two following routes:
 
-- [GET] /status/ping
-- [GET] /status/monitor
+- **[GET]** /status/ping
+- **[GET]** /status/monitor
 
 ### Route: /status/ping
 
 This route is used for a general health check of the server, if successful it will return the config file to the user.
 
+The response on the ping endpoint
+
+```
+{
+    "environment": "DEVELOPMENT",
+    "name": "SAMPLE_PROJECT",
+    "version": "0.0.0",
+    "success": true
+}
+```
 ### Route: /status/monitor
 
-The monitor route will return results depending on the config file.
+The monitor route will return results depending on the config file. If you don't provide checks it will return the following
+by default:
+
+```
+{
+    "http": {
+        "status": "fulfilled",
+        "value": null
+    },
+    "microservices": {
+        "status": "fulfilled",
+        "value": null
+    },
+    "memory": {
+        "status": "fulfilled",
+        "value": null
+    },
+    "typeOrm": {
+        "status": "fulfilled",
+        "value": null
+    },
+    "custom": {
+        "status": "fulfilled",
+        "value": null
+    }
+}
+```
+
+Below is an example of a monitor request with all the healthChecks configured:
+
+```
+{
+    "http": {
+        "status": "rejected",
+        "reason": {
+            "response": {
+                "status": "error",
+                "info": {
+                    "google": {
+                        "status": "up"
+                    }
+                },
+                "error": {
+                    "facebook": {
+                        "status": "down",
+                        "message": "getaddrinfo ENOTFOUND www.faceboggigiugiok.com"
+                    }
+                },
+                "details": {
+                    "google": {
+                        "status": "up"
+                    },
+                    "facebook": {
+                        "status": "down",
+                        "message": "getaddrinfo ENOTFOUND www.faceboggigiugiok.com"
+                    }
+                }
+            },
+            "status": 503,
+            "message": "Service Unavailable Exception"
+        }
+    },
+    "microservices": {
+        "status": "fulfilled",
+        "value": {
+            "status": "ok",
+            "info": {
+                "ShoppingCart": {
+                    "status": "up"
+                }
+            },
+            "error": {},
+            "details": {
+                "ShoppingCart": {
+                    "status": "up"
+                }
+            }
+        }
+    },
+    "memory": {
+        "status": "fulfilled",
+        "value": {
+            "status": "ok",
+            "info": {
+                "memory": {
+                    "status": "up"
+                }
+            },
+            "error": {},
+            "details": {
+                "memory": {
+                    "status": "up"
+                }
+            }
+        }
+    },
+    "typeOrm": {
+        "status": "fulfilled",
+        "value": {
+            "status": "ok",
+            "info": {
+                "postgres": {
+                    "status": "up"
+                }
+            },
+            "error": {},
+            "details": {
+                "postgres": {
+                    "status": "up"
+                }
+            }
+        }
+    },
+    "custom": {
+        "status": "rejected",
+        "reason": {
+            "response": {
+                "status": "error",
+                "info": {},
+                "error": {
+                    "doge": {
+                        "status": "down",
+                        "badboys": 1
+                    }
+                },
+                "details": {
+                    "doge": {
+                        "status": "down",
+                        "badboys": 1
+                    }
+                }
+            },
+            "status": 503,
+            "message": "Service Unavailable Exception"
+        }
+    }
+}
+```
+
+***NOTE:*** This return type will change in future development builds.
 
 ## Stay in touch
 
