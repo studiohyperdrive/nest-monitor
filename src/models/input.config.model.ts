@@ -9,8 +9,8 @@ export class InputConfig {
     public environment: string,
     public httpChecks?: HttpCheck[],
     public microserviceChecks?: MicroServiceCheck[],
-    public memoryCheck?: MemoryCheck, // public diskCheck?: DiskCheck,
-    public typeOrmCheck?: TypeOrmCheck, // public mongoCheck?: MongoCheck,
+    public memoryCheck?: MemoryCheck,
+    public typeOrmCheck?: TypeOrmCheck,
     public customHealthChecks?: ICustomHealth[],
   ) {}
 }
@@ -41,13 +41,3 @@ export class TypeOrmCheck {
     public options: TypeOrmModuleOptions,
   ) {}
 }
-
-export class MongoCheck {
-  public constructor(public uri: string) {}
-}
-
-/*
-export class DiskCheck {
-  public constructor(public name: string = 'disk', public capacity: number) {}
-}
- */

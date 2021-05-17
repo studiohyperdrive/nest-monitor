@@ -1,8 +1,6 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import {
-  HealthCheck,
   HealthCheckService,
-  DiskHealthIndicator,
   HttpHealthIndicator,
   MemoryHealthIndicator,
   MicroserviceHealthIndicator,
