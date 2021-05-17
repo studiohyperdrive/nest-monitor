@@ -3,9 +3,9 @@ import { Transport } from '@nestjs/microservices';
 import { DogHealthIndicator } from './health/dog.health';
 
 export const config: InputConfig = {
-  environment: '',
-  name: '',
-  version: '',
+  environment: 'DEVELOPMENT',
+  name: 'SAMPLE_PROJECT',
+  version: '0.0.0',
   memoryCheck: {
     name: 'memory',
     heapThreshold: 150,
@@ -17,9 +17,10 @@ export const config: InputConfig = {
     },
     {
       siteName: 'facebook',
-      siteUrl: 'https://www.faceboggigiugiok.com',
+      siteUrl: 'https://www.faceboosddsadsak.com',
     },
   ],
+  customHealthChecks: [new DogHealthIndicator()],
   typeOrmCheck: {
     name: 'postgres',
     timeout: 3000,
@@ -33,7 +34,6 @@ export const config: InputConfig = {
       entities: [],
     },
   },
-  customHealthChecks: [new DogHealthIndicator()],
   microserviceChecks: [
     {
       microserviceName: 'ShoppingCart',
@@ -41,7 +41,7 @@ export const config: InputConfig = {
       config: {
         options: {
           host: 'localhost',
-          port: 3000,
+          port: 73518,
         },
       },
     },

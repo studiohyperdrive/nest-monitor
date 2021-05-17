@@ -2,9 +2,12 @@ import { Controller, Get, Logger } from '@nestjs/common';
 import { Config } from './models/config.model';
 import { ConfigService } from './config/config.service';
 import { MonitorService } from './monitor.service';
+import { Util } from './helpers/promise-map';
 
 @Controller('/status')
 export class MonitorController {
+  private readonly logger = new Logger(MonitorController.name);
+
   public constructor(
     private configService: ConfigService,
     private monitorService: MonitorService,
@@ -13,7 +16,7 @@ export class MonitorController {
   @Get('ping')
   getPing() {
     if (this.configService.config == null) {
-      Logger.error('Config object appears to be null');
+      this.logger.error('Config object appears to be null');
 
       return { success: false, message: 'Config object appears to be null' };
     }
@@ -30,7 +33,6 @@ export class MonitorController {
 
   @Get('monitor')
   async getMonitor(): Promise<any> {
-    // Error can only be caught here, even though the error orginally appears in the check itself.
     try {
       const [
         httpResult,
@@ -47,16 +49,14 @@ export class MonitorController {
       ]);
 
       return {
-        http: httpResult ? httpResult : null,
-        microservices: microservicesResult ? microservicesResult : null,
-        memory: memoryResult ? memoryResult : null,
-        typeOrm: typeOrmResult ? typeOrmResult : null,
-        custom: customHealthResult ? customHealthResult : null,
+        http: Util.MapPromise(httpResult),
+        microservices: Util.MapPromise(microservicesResult),
+        memory: Util.MapPromise(memoryResult),
+        typeOrm: Util.MapPromise(typeOrmResult),
+        custom: Util.MapPromise(customHealthResult),
       };
     } catch (e) {
       return e;
     }
-
-    // todo: Cycle through dependencies and do a vibe check :D
   }
 }

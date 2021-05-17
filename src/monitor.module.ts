@@ -4,17 +4,13 @@ import { MonitorService } from './monitor.service';
 import { InputConfig } from './models/input.config.model';
 import { TerminusModule } from '@nestjs/terminus';
 
-import { config as debugConfig } from './config/debug.config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigService } from './config/config.service';
 
-// voodoo magic, be careful
 @Module({
   imports: [TerminusModule],
-  // Debug: remove later
   controllers: [MonitorController],
   providers: [MonitorService, ConfigService],
-  //
 })
 export class MonitorModule {
   public static forConfig(config: InputConfig): DynamicModule {
