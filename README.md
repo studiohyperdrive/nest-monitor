@@ -141,7 +141,7 @@ of the type [TypeOrmModuleOptions](https://typeorm.io/#/connection-options) what
 
 ### Custom checks
 
-There are times where you have to define custom checks to test specific code. This is where the custom checks come into play.
+There are times where you have to define custom checks to test specific code. This is where the [custom checks]('https://docs.nestjs.com/recipes/terminus#custom-health-indicator') come into play.
 
 ```js
 const config: InputConfig = {
@@ -151,7 +151,7 @@ const config: InputConfig = {
 ```
 
 Every custom health check has to inherit from HealthIndicator and implement the ICustomHealth interface,
-this will force the tests to use the isHealthy function.
+this will force the tests to use the isHealthy function located within the package.
 
 ```ts
 @Injectable()
@@ -343,12 +343,14 @@ Below is an example of a monitor request with all the healthChecks configured:
 }
 ```
 
-***NOTE:*** This return type will change in future development builds.
+## Planned features
+
+- Let the developer decide the testing endpoints. e.g. `/status` => `/my-custom-status`, `/ping` => `/my-custom-ping` 
 
 ## Stay in touch
 
 - Author                - Arne Six
-- Mainting developer    - Arne Six
+- Maintaining developer    - Arne Six
 - Owner                 - [Studio Hyperdrive](https://www.studiohyperdrive.be)
 
 ## License
